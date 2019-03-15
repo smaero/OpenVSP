@@ -4,6 +4,11 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+// 15 Mar 19 -- Modified this so that negative CT or CP values don't crash
+// the program.  Negative thrust is limited to the amount that would cause
+// the airspeed behind the rotor to be zero.  Tangential and radial induced
+// speeds are set to zero when thrust is negative.
+
 #include "RotorDisk.H"
 
 /*##############################################################################
@@ -210,6 +215,8 @@ void ROTOR_DISK::Velocity(double xyz[3], double q[5])
     double Velocity_X, Velocity_R, Velocity_T, Omega, VxR0, Delta_Cp, Fact;
     double eta_mom, eta_prop, CT_h, CP_h, Sigma_Cd, Sigma_Cl, Vo, TotalVinfMag;
 
+    double tmpthrust, thang;
+
     // Local free stream velocity normal to rotor
 
     VinfMag_ = vector_dot(Vinf_,RotorNormal_);
@@ -248,7 +255,7 @@ void ROTOR_DISK::Velocity(double xyz[3], double q[5])
     mag = sqrt(vector_dot(tvec,tvec));
 
     mag = MAX(mag,1.e-9);
-    
+
     tvec[0] /= mag;
     tvec[1] /= mag;
     tvec[2] /= mag;
@@ -258,7 +265,19 @@ void ROTOR_DISK::Velocity(double xyz[3], double q[5])
 
  //   Vh = sqrt(RotorThrust()/(2.*Density_*RotorArea()));
 
-    Vh = -0.5*VinfMag_ + sqrt( pow(0.5*VinfMag_,2.) + RotorThrust()/(2.*Density_*RotorArea()) );
+//    Vh = -0.5*VinfMag_ + sqrt( pow(0.5*VinfMag_,2.) + RotorThrust()/(2.*Density_*RotorArea()) );
+
+    tmpthrust = RotorThrust();
+
+    thang =  pow(0.5*VinfMag_,2.) + tmpthrust/(2.*Density_*RotorArea());
+
+    thang = MAX(0.0,thang);
+
+        if (thang>=0.0) {
+
+          Vh = -0.5*VinfMag_ + sqrt(thang);
+
+
 
 // printf("Vh: %lf ... Vh/VinfMag_: %lf  ...Thrust: %lf \n",Vh,Vh/VinfMag_,RotorThrust());
 
@@ -322,6 +341,8 @@ void ROTOR_DISK::Velocity(double xyz[3], double q[5])
 
     }
 
+    if (tmpthrust>0.0) {
+
     // Angular velocity
 
     Omega = ABS(RotorRPM_) * 2. * PI / 60.;
@@ -372,6 +393,18 @@ void ROTOR_DISK::Velocity(double xyz[3], double q[5])
 
     Delta_Cp *= eta_prop / eta_mom;
 
+    } else
+    {
+	  Velocity_T = 0.0;
+	  Delta_Cp = 0.0;
+
+	  // zero out radial velocity when thrust is negative?
+	  // there shouldn't be a problem with the calculation, but the value's
+	  // probably not going to be good.
+	  Velocity_R = 0.0;
+	}
+
+
     // Convert to xyz coordinates
 
 //    Velocity_X *= Omega * r / ( pow(Omega*r,2.) + pow(VinfMag_+Vh,2.) );
@@ -388,7 +421,9 @@ void ROTOR_DISK::Velocity(double xyz[3], double q[5])
     q[4] = 0.;
     if ( z >= 0. && r <= RotorRadius_ ) q[4] = Vh;
 
-    Vh = -0.5*VinfMag_ + sqrt( pow(0.5*VinfMag_,2.) + RotorThrust()/(2.*Density_*RotorArea()) );
+//    Vh = -0.5*VinfMag_ + sqrt( pow(0.5*VinfMag_,2.) + RotorThrust()/(2.*Density_*RotorArea()) );
+    Vh = -0.5*VinfMag_ + sqrt( pow(0.5*VinfMag_,2.) + tmpthrust/(2.*Density_*RotorArea()) );
+
 /*
 printf("RotorThrust: %lf \n",RotorThrust());
 printf("RotorPower: %lf \n",RotorPower()/550.);
@@ -402,6 +437,12 @@ printf("Vh: %lf \n",Vh);
 */
 
     if ( r <= RotorHubRadius_ ) q[0] = q[1] = q[2] = q[3] = q[4] = 0.;
+
+    } else
+    {
+        // do nothing
+        q[0] = q[1] = q[2] = q[3] = q[4] = 0.;
+    }
 
 //    printf("x,r,t: %lf %lf %lf \n",Velocity_X, Velocity_R, Velocity_T);
 
