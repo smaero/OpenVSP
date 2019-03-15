@@ -513,35 +513,35 @@ void ParseInput(int argc, char *argv[])
        // 11.23.18 -- ????'s adding some cases here...
 
        else if ( strcmp(argv[i],"-stab_pqr") == 0) {
-	   StabControlRun_ = 1;
-	   SkipPQR_ = 0;
-	   SkipControls_ = 1;
-	   SkipAlpBet_ = 1;
-	   SkipMach_ = 1;
+    	   StabControlRun_ = 1;
+    	   SkipPQR_ = 0;
+    	   SkipControls_ = 1;
+    	   SkipAlpBet_ = 1;
+    	   SkipMach_ = 1;
        }
 
        else if ( strcmp(argv[i],"-stab_cont") == 0) {
-	   StabControlRun_ = 1;
-	   SkipPQR_ = 1;
-	   SkipControls_ = 0;
-	   SkipAlpBet_ = 1;
-	   SkipMach_ = 1;
+    	   StabControlRun_ = 1;
+    	   SkipPQR_ = 1;
+    	   SkipControls_ = 0;
+    	   SkipAlpBet_ = 1;
+    	   SkipMach_ = 1;
        }
 
        else if ( strcmp(argv[i],"-stab_alpbet") == 0) {
-	   StabControlRun_ = 1;
-	   SkipPQR_ = 1;
-	   SkipControls_ = 1;
-	   SkipAlpBet_ = 0;
-	   SkipMach_ = 1;
+    	   StabControlRun_ = 1;
+    	   SkipPQR_ = 1;
+    	   SkipControls_ = 1;
+    	   SkipAlpBet_ = 0;
+    	   SkipMach_ = 1;
        }
 
        else if ( strcmp(argv[i],"-stab_nocont") == 0) {
-	   StabControlRun_ = 1;
-	   SkipPQR_ = 0;
-	   SkipControls_ = 1;
-	   SkipAlpBet_ = 0;
-	   SkipMach_ = 0;
+    	   StabControlRun_ = 1;
+    	   SkipPQR_ = 0;
+    	   SkipControls_ = 1;
+    	   SkipAlpBet_ = 0;
+    	   SkipMach_ = 0;
        }
 
        // - - - - - - - - - - - - - - - - - - - - - - - - - -
