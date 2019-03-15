@@ -3,3 +3,4 @@ build/
 inst/
 *.bak
 .idea/
+lib-build/
