@@ -45,11 +45,13 @@ else()
 		--without-iconv
 		--without-zlib
 		--without-lzma
-		--disable-shared
+		--with-pic
   )
   set(libxml2_build_command "")
   set(libxml2_install_command "")
 endif()
+
+# removed --disable-shared and added --with-pic up there
 
 ExternalProject_Add(LIBXML2
   URL ${CMAKE_SOURCE_DIR}/libxml2-2.9.3.tar.gz
