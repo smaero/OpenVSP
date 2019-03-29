@@ -54,7 +54,7 @@ endif()
 # removed --disable-shared and added --with-pic up there
 
 ExternalProject_Add(LIBXML2
-  URL ${CMAKE_SOURCE_DIR}/libxml2-2.9.3.tar.gz
+  URL ${CMAKE_SOURCE_DIR}/libxml2-2.9.9.tar.gz
   SOURCE_DIR ${libxml2_source}
   INSTALL_DIR ${libxml2_install}
   BUILD_IN_SOURCE 1

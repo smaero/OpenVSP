@@ -39,6 +39,10 @@ enum BOR_MODE { BOR_FLOWTHROUGH,
                 BOR_NUM_MODES
               };
 
+enum CAMBER_INPUT_FLAG { MAX_CAMB,
+                         DESIGN_CL
+};
+
 enum CAP_TYPE { NO_END_CAP,
                 FLAT_END_CAP,
                 ROUND_END_CAP,
@@ -237,7 +241,9 @@ enum EXPORT_TYPE {  EXPORT_FELISA,
                     EXPORT_PMARC,
                     EXPORT_OBJ,
                     EXPORT_SELIG_AIRFOIL,
-                    EXPORT_BEZIER_AIRFOIL
+                    EXPORT_BEZIER_AIRFOIL,
+                    EXPORT_IGES_STRUCTURE,
+                    EXPORT_STEP_STRUCTURE
                  };
 
 enum FEA_CROSS_SECT_TYPE { FEA_XSEC_GENERAL = 0,
@@ -411,11 +417,18 @@ enum PROJ_TGT_TYPE { SET_TARGET,
                      NUM_PROJ_TGT_OPTIONS
                    };
 
+enum PROP_MODE { PROP_BLADES,
+                 PROP_BOTH,
+                 PROP_DISK
+               };
+
 enum PROP_PCURVE { PROP_CHORD,
                    PROP_TWIST,
                    PROP_RAKE,
                    PROP_SKEW,
                    PROP_SWEEP,
+                   PROP_THICK,
+                   PROP_CLI,
                    NUM_PROP_PCURVE
                  };
 

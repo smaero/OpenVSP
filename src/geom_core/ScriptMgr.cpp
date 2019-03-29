@@ -453,6 +453,13 @@ void ScriptMgrSingleton::RegisterEnums( asIScriptEngine* se )
     r = se->RegisterEnumValue( "BOR_MODE", "BOR_NUM_MODES", BOR_NUM_MODES );
     assert( r >= 0 );
 
+    r = se->RegisterEnum( "CAMBER_INPUT_FLAG" );
+    assert( r >= 0 );
+    r = se->RegisterEnumValue( "CAMBER_INPUT_FLAG", "MAX_CAMB", MAX_CAMB );
+    assert( r >= 0 );
+    r = se->RegisterEnumValue( "CAMBER_INPUT_FLAG", "DESIGN_CL", DESIGN_CL );
+    assert( r >= 0 );
+
     r = se->RegisterEnum( "CAP_TYPE" );
     assert( r >= 0 );
     r = se->RegisterEnumValue( "CAP_TYPE", "NO_END_CAP", vsp::NO_END_CAP );
@@ -835,6 +842,10 @@ void ScriptMgrSingleton::RegisterEnums( asIScriptEngine* se )
     r = se->RegisterEnumValue( "EXPORT_TYPE", "EXPORT_SELIG_AIRFOIL", EXPORT_SELIG_AIRFOIL );
     assert( r >= 0 );
     r = se->RegisterEnumValue( "EXPORT_TYPE", "EXPORT_BEZIER_AIRFOIL", EXPORT_BEZIER_AIRFOIL );
+    assert( r >= 0 );
+    r = se->RegisterEnumValue( "EXPORT_TYPE", "EXPORT_IGES_STRUCTURE", EXPORT_IGES_STRUCTURE );
+    assert( r >= 0 );
+    r = se->RegisterEnumValue( "EXPORT_TYPE", "EXPORT_STEP_STRUCTURE", EXPORT_STEP_STRUCTURE );
     assert( r >= 0 );
 
     r = se->RegisterEnum( "FEA_CROSS_SECT_TYPE" );
@@ -1220,6 +1231,15 @@ void ScriptMgrSingleton::RegisterEnums( asIScriptEngine* se )
     r = se->RegisterEnumValue( "PROJ_TGT_TYPE", "NUM_PROJ_TGT_OPTIONS", NUM_PROJ_TGT_OPTIONS );
     assert( r >= 0 );
 
+    r = se->RegisterEnum( "PROP_MODE" );
+    assert( r >= 0 );
+    r = se->RegisterEnumValue( "PROP_MODE", "PROP_BLADES", PROP_BLADES );
+    assert( r >= 0 );
+    r = se->RegisterEnumValue( "PROP_MODE", "PROP_BOTH", PROP_BOTH );
+    assert( r >= 0 );
+    r = se->RegisterEnumValue( "PROP_MODE", "PROP_DISK", PROP_DISK );
+    assert( r >= 0 );
+
     r = se->RegisterEnum( "PROP_PCURVE" );
     assert( r >= 0 );
     r = se->RegisterEnumValue( "PROP_PCURVE", "PROP_CHORD", PROP_CHORD );
@@ -1231,6 +1251,10 @@ void ScriptMgrSingleton::RegisterEnums( asIScriptEngine* se )
     r = se->RegisterEnumValue( "PROP_PCURVE", "PROP_SKEW", PROP_SKEW );
     assert( r >= 0 );
     r = se->RegisterEnumValue( "PROP_PCURVE", "PROP_SWEEP", PROP_SWEEP );
+    assert( r >= 0 );
+    r = se->RegisterEnumValue( "PROP_PCURVE", "PROP_THICK", PROP_THICK );
+    assert( r >= 0 );
+    r = se->RegisterEnumValue( "PROP_PCURVE", "PROP_CLI", PROP_CLI );
     assert( r >= 0 );
     r = se->RegisterEnumValue( "PROP_PCURVE", "NUM_PROP_PCURVE", NUM_PROP_PCURVE );
     assert( r >= 0 );
@@ -1966,7 +1990,7 @@ void ScriptMgrSingleton::RegisterAPI( asIScriptEngine* se )
     assert( r );
 
     //==== Visualization Functions ====//
-    r = se->RegisterGlobalFunction( "void ScreenGrab( const string & in file_name, int w, int h )", asFUNCTION( vsp::ScreenGrab ), asCALL_CDECL );
+    r = se->RegisterGlobalFunction( "void ScreenGrab( const string & in file_name, int w, int h, bool transparentBG )", asFUNCTION( vsp::ScreenGrab ), asCALL_CDECL );
     assert( r >= 0 );
     r = se->RegisterGlobalFunction( "void SetViewAxis( bool vaxis )", asFUNCTION( vsp::SetViewAxis ), asCALL_CDECL );
     assert( r >= 0 );

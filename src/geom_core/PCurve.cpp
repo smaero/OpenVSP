@@ -758,12 +758,32 @@ double PCurve::IntegrateAF( double r0 )
     return m_Curve.IntegrateAF( r0 );
 }
 
+double PCurve::IntegrateCLi( double r0 )
+{
+    if ( m_LateUpdateFlag )
+    {
+        Update();
+    }
+
+    return m_Curve.IntegrateCLi( r0 );
+}
+
 void PCurve::BinCubicTMap( vector < double > &tmap, vector < double > &tdisc )
 {
+    if ( m_LateUpdateFlag )
+    {
+        Update();
+    }
+
     m_Curve.BinCubicTMap( tmap, tdisc );
 }
 
 void PCurve::GetTMap( vector < double > &tmap, vector < double > &tdisc )
 {
+    if ( m_LateUpdateFlag )
+    {
+        Update();
+    }
+
     m_Curve.GetTMap( tmap, tdisc );
 }

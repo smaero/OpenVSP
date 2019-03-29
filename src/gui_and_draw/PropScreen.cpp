@@ -14,7 +14,7 @@ using namespace vsp;
 
 
 //==== Constructor ====//
-PropScreen::PropScreen( ScreenMgr* mgr ) : GeomScreen( mgr, 400, 690, "Propeller" )
+PropScreen::PropScreen( ScreenMgr* mgr ) : GeomScreen( mgr, 400, 720, "Propeller" )
 {
     m_CurrDisplayGroup = NULL;
 
@@ -23,6 +23,15 @@ PropScreen::PropScreen( ScreenMgr* mgr ) : GeomScreen( mgr, 400, 690, "Propeller
     Fl_Group* design_group = AddSubGroup( design_tab, 5 );
 
     m_DesignLayout.SetGroupAndScreen( design_group, this );
+
+    m_DesignLayout.AddDividerBox( "Modeling" );
+    m_PropModeChoice.AddItem( "Blades" );
+    m_PropModeChoice.AddItem( "Both" );
+    m_PropModeChoice.AddItem( "Disk" );
+    m_DesignLayout.AddChoice( m_PropModeChoice, "Prop Mode" );
+
+    m_DesignLayout.AddYGap();
+
     m_DesignLayout.AddDividerBox( "Design" );
 
     m_DesignLayout.SetButtonWidth( 100 );
@@ -63,6 +72,8 @@ PropScreen::PropScreen( ScreenMgr* mgr ) : GeomScreen( mgr, 400, 690, "Propeller
     m_DesignLayout.SetButtonWidth( 100 );
 
     m_DesignLayout.AddSlider( m_ConstructSlider, "Construct X/C", 1, "%5.3f" );
+    m_DesignLayout.AddSlider( m_FeatherAxisSlider, "Feather Axis", 1, "%5.3f" );
+    m_DesignLayout.AddSlider( m_FeatherOffsetSlider, "Feather Offset", 1, "%5.3f" );
 
     m_BetaToggle.Init( this );
     m_BetaToggle.AddButton( m_FeatherToggle.GetFlButton() );
@@ -76,6 +87,8 @@ PropScreen::PropScreen( ScreenMgr* mgr ) : GeomScreen( mgr, 400, 690, "Propeller
 
     m_DesignLayout.ForceNewLine();
     m_DesignLayout.SetSameLineFlag( false );
+
+    m_DesignLayout.AddOutput( m_CLiOutput, "CLi", "%6.2f" );
 
     m_DesignLayout.AddYGap();
 
@@ -140,6 +153,8 @@ PropScreen::PropScreen( ScreenMgr* mgr ) : GeomScreen( mgr, 400, 690, "Propeller
     m_CurveChoice.AddItem( "Rake" );
     m_CurveChoice.AddItem( "Skew" );
     m_CurveChoice.AddItem( "Sweep" );
+    m_CurveChoice.AddItem( "Thick" );
+    m_CurveChoice.AddItem( "CLi" );
 
     m_EditCurve = CHORD;
 
@@ -286,7 +301,42 @@ PropScreen::PropScreen( ScreenMgr* mgr ) : GeomScreen( mgr, 400, 690, "Propeller
     m_FourSeriesGroup.AddSlider( m_FourChordSlider, "Chord", 10, "%7.3f" );
     m_FourSeriesGroup.AddSlider( m_FourThickChordSlider, "T/C", 1, "%7.5f" );
     m_FourSeriesGroup.AddYGap();
+
+    int actionToggleButtonWidth = 15;
+    int actionSliderButtonWidth = m_FourSeriesGroup.GetButtonWidth() - actionToggleButtonWidth;
+
+    m_FourSeriesGroup.SetSameLineFlag( true );
+
+    m_FourSeriesGroup.SetFitWidthFlag( false );
+    m_FourSeriesGroup.SetButtonWidth( actionToggleButtonWidth );
+    m_FourSeriesGroup.AddButton( m_FourCamberButton, "" );
+    m_FourSeriesGroup.SetButtonWidth( actionSliderButtonWidth );
+    m_FourSeriesGroup.SetFitWidthFlag( true );
     m_FourSeriesGroup.AddSlider( m_FourCamberSlider, "Camber", 0.2, "%7.5f" );
+
+    m_FourSeriesGroup.ForceNewLine();
+
+    m_FourSeriesGroup.SetFitWidthFlag( false );
+    m_FourSeriesGroup.SetButtonWidth( actionToggleButtonWidth );
+    m_FourSeriesGroup.AddButton( m_FourCLiButton, "" );
+    m_FourSeriesGroup.SetButtonWidth( actionSliderButtonWidth );
+    m_FourSeriesGroup.SetFitWidthFlag( true );
+    m_FourSeriesGroup.AddSlider( m_FourCLiSlider, "Ideal CL", 1, "%7.5f" );
+
+    m_FourSeriesGroup.ForceNewLine();
+
+    m_FourSeriesGroup.SetSameLineFlag( false );
+    m_FourSeriesGroup.SetButtonWidth( actionSliderButtonWidth + actionToggleButtonWidth );
+
+    m_FourCamberGroup.Init( this );
+    m_FourCamberGroup.AddButton( m_FourCamberButton.GetFlButton() );
+    m_FourCamberGroup.AddButton( m_FourCLiButton.GetFlButton() );
+
+    vector< int > camb_val_map;
+    camb_val_map.push_back( vsp::MAX_CAMB );
+    camb_val_map.push_back( vsp::DESIGN_CL );
+    m_FourCamberGroup.SetValMapVec( camb_val_map );
+
     m_FourSeriesGroup.AddSlider( m_FourCamberLocSlider, "CamberLoc", 1, "%7.5f" );
     m_FourSeriesGroup.AddYGap();
     m_FourSeriesGroup.AddButton( m_FourInvertButton, "Invert Airfoil" );
@@ -465,7 +515,36 @@ PropScreen::PropScreen( ScreenMgr* mgr ) : GeomScreen( mgr, 400, 690, "Propeller
     m_FourDigitModGroup.AddSlider( m_FourModChordSlider, "Chord", 10, "%7.3f" );
     m_FourDigitModGroup.AddSlider( m_FourModThickChordSlider, "T/C", 1, "%7.5f" );
     m_FourDigitModGroup.AddYGap();
+
+    m_FourDigitModGroup.SetSameLineFlag( true );
+
+    m_FourDigitModGroup.SetFitWidthFlag( false );
+    m_FourDigitModGroup.SetButtonWidth( actionToggleButtonWidth );
+    m_FourDigitModGroup.AddButton( m_FourModCamberButton, "" );
+    m_FourDigitModGroup.SetButtonWidth( actionSliderButtonWidth );
+    m_FourDigitModGroup.SetFitWidthFlag( true );
     m_FourDigitModGroup.AddSlider( m_FourModCamberSlider, "Camber", 0.2, "%7.5f" );
+
+    m_FourDigitModGroup.ForceNewLine();
+
+    m_FourDigitModGroup.SetFitWidthFlag( false );
+    m_FourDigitModGroup.SetButtonWidth( actionToggleButtonWidth );
+    m_FourDigitModGroup.AddButton( m_FourModCLiButton, "" );
+    m_FourDigitModGroup.SetButtonWidth( actionSliderButtonWidth );
+    m_FourDigitModGroup.SetFitWidthFlag( true );
+    m_FourDigitModGroup.AddSlider( m_FourModCLiSlider, "Ideal CL", 1, "%7.5f" );
+
+    m_FourDigitModGroup.ForceNewLine();
+
+    m_FourDigitModGroup.SetSameLineFlag( false );
+    m_FourDigitModGroup.SetButtonWidth( actionSliderButtonWidth + actionToggleButtonWidth );
+
+    m_FourModCamberGroup.Init( this );
+    m_FourModCamberGroup.AddButton( m_FourModCamberButton.GetFlButton() );
+    m_FourModCamberGroup.AddButton( m_FourModCLiButton.GetFlButton() );
+
+    m_FourModCamberGroup.SetValMapVec( camb_val_map );
+
     m_FourDigitModGroup.AddSlider( m_FourModCamberLocSlider, "CamberLoc", 1, "%7.5f" );
     m_FourDigitModGroup.AddYGap();
     m_FourDigitModGroup.AddSlider( m_FourModThicknessLocSlider, "T/CLoc", 0.5, "%7.5f" );
@@ -802,6 +881,9 @@ bool PropScreen::Update()
 
     m_ConstructSlider.Update( propeller_ptr->m_Construct.GetID() );
 
+    m_FeatherAxisSlider.Update( propeller_ptr->m_FeatherAxis.GetID() );
+    m_FeatherOffsetSlider.Update( propeller_ptr->m_FeatherOffset.GetID() );
+
     if ( propeller_ptr->m_UseBeta34Flag() == 1 )
     {
         m_Beta34Slider.Activate();
@@ -817,6 +899,9 @@ bool PropScreen::Update()
 
     char str[255];
     m_AFOutput.Update( propeller_ptr->m_AF.GetID() );
+    m_CLiOutput.Update( propeller_ptr->m_CLi.GetID() );
+
+    m_PropModeChoice.Update( propeller_ptr->m_PropMode.GetID() );
 
     m_RFoldSlider.Update( propeller_ptr->m_RadFoldAxis.GetID() );
     m_AxFoldSlider.Update( propeller_ptr->m_AxialFoldAxis.GetID() );
@@ -929,6 +1014,12 @@ bool PropScreen::Update()
         break;
     case SWEEP:
         m_CurveEditor.Update( &propeller_ptr->m_SweepCurve );
+        break;
+    case THICK:
+        m_CurveEditor.Update( &propeller_ptr->m_ThickCurve, &propeller_ptr->m_ChordCurve, string( "Thick/R" ) );
+        break;
+    case CLI:
+        m_CurveEditor.Update( &propeller_ptr->m_CLICurve );
         break;
     }
 
@@ -1043,6 +1134,8 @@ bool PropScreen::Update()
                 m_FourChordSlider.Update( fs_xs->m_Chord.GetID() );
                 m_FourThickChordSlider.Update( fs_xs->m_ThickChord.GetID() );
                 m_FourCamberSlider.Update( fs_xs->m_Camber.GetID() );
+                m_FourCLiSlider.Update( fs_xs->m_IdealCl.GetID() );
+                m_FourCamberGroup.Update( fs_xs->m_CamberInputFlag.GetID() );
                 m_FourCamberLocSlider.Update( fs_xs->m_CamberLoc.GetID() );
                 m_FourInvertButton.Update( fs_xs->m_Invert.GetID() );
                 m_FourNameOutput.Update( fs_xs->GetAirfoilName() );
@@ -1170,6 +1263,8 @@ bool PropScreen::Update()
                 m_FourModChordSlider.Update( fs_xs->m_Chord.GetID() );
                 m_FourModThickChordSlider.Update( fs_xs->m_ThickChord.GetID() );
                 m_FourModCamberSlider.Update( fs_xs->m_Camber.GetID() );
+                m_FourModCLiSlider.Update( fs_xs->m_IdealCl.GetID() );
+                m_FourModCamberGroup.Update( fs_xs->m_CamberInputFlag.GetID() );
                 m_FourModCamberLocSlider.Update( fs_xs->m_CamberLoc.GetID() );
                 m_FourModInvertButton.Update( fs_xs->m_Invert.GetID() );
                 m_FourModNameOutput.Update( fs_xs->GetAirfoilName() );

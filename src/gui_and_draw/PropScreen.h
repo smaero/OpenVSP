@@ -33,7 +33,7 @@ public:
 
 protected:
 
-    enum { CHORD, TWIST, RAKE, SKEW, SWEEP };
+    enum { CHORD, TWIST, RAKE, SKEW, SWEEP, THICK, CLI };
 
     GroupLayout m_DesignLayout;
 
@@ -50,11 +50,16 @@ protected:
     ToggleRadioGroup m_BetaToggle;
 
     SliderAdjRangeInput m_ConstructSlider;
+    SliderAdjRangeInput m_FeatherOffsetSlider;
+    SliderAdjRangeInput m_FeatherAxisSlider;
 
     ToggleButton m_ReverseToggle;
 
     SliderInput m_AFLimitSlider;
     Output m_AFOutput;
+    Output m_CLiOutput;
+
+    Choice m_PropModeChoice;
 
     Choice m_RootCapTypeChoice;
     SliderAdjRangeInput m_RootCapLenSlider;
@@ -136,6 +141,10 @@ protected:
     SliderAdjRangeInput m_FourChordSlider;
     SliderAdjRangeInput m_FourThickChordSlider;
     SliderAdjRangeInput m_FourCamberSlider;
+    SliderAdjRangeInput m_FourCLiSlider;
+    ToggleButton m_FourCamberButton;
+    ToggleButton m_FourCLiButton;
+    ToggleRadioGroup m_FourCamberGroup;
     SliderAdjRangeInput m_FourCamberLocSlider;
     CheckButton m_FourSharpTEButton;
 
@@ -217,6 +226,10 @@ protected:
     SliderAdjRangeInput m_FourModChordSlider;
     SliderAdjRangeInput m_FourModThickChordSlider;
     SliderAdjRangeInput m_FourModCamberSlider;
+    SliderAdjRangeInput m_FourModCLiSlider;
+    ToggleButton m_FourModCamberButton;
+    ToggleButton m_FourModCLiButton;
+    ToggleRadioGroup m_FourModCamberGroup;
     SliderAdjRangeInput m_FourModCamberLocSlider;
     SliderAdjRangeInput m_FourModThicknessLocSlider;
     SliderAdjRangeInput m_FourModLERadIndexSlider;
